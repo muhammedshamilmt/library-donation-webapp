@@ -1,0 +1,300 @@
+"use client"
+
+import { useEffect, useMemo, useState } from "react"
+import { useRouter } from "next/navigation"
+import { isAdminAuthed, setAdminAuthed } from "@/lib/admin-auth"
+import { cn } from "@/lib/utils"
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+
+const BUNDLE_PRICE = 1100
+
+export default function AdminDashboard() {
+  const router = useRouter()
+  const [donors, setDonors] = useState<Donation[]>([])
+  const [loading, setLoading] = useState(true)
+  const [selected, setSelected] = useState<Donation | null>(null)
+
+  useEffect(() => {
+    if (!isAdminAuthed()) {
+      router.replace("/admin?redirect=/admin/dashboard")
+    }
+  }, [router])
+
+  useEffect(() => {
+    let isMounted = true
+    ;(async () => {
+      try {
+        const res = await fetch("/api/donations", { cache: "no-store" })
+        if (!res.ok) throw new Error("Failed to fetch donations")
+        const data = await res.json()
+        if (isMounted) setDonors(data.donations || [])
+      } catch (_e) {
+        if (isMounted) setDonors([])
+      } finally {
+        if (isMounted) setLoading(false)
+      }
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
+  const { totalAmount, totalDonors, totalBundles, students, newDonations } = useMemo(() => {
+    const totals = donors.reduce(
+      (acc, d) => {
+        acc.totalAmount += d.total
+        if (typeof d.bundles === "number") acc.totalBundles += d.bundles || 0
+        acc.totalDonors += 1
+        return acc
+      },
+      { totalAmount: 0, totalDonors: 0, totalBundles: 0 },
+    )
+    const customAmount = donors.filter((d) => !d.bundles).reduce((sum, d) => sum + d.total, 0)
+    const students = totals.totalBundles + Math.floor(customAmount / BUNDLE_PRICE)
+    const newDonations = donors.filter((d) => (d.status ?? "new") === "new").length
+    return { ...totals, students, newDonations }
+  }, [donors])
+
+  return (
+    <section className="rounded-xl bg-white border border-gray-200 p-6 md:p-10">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl md:text-3xl font-semibold text-blue-900">Admin Dashboard</h1>
+          <p className="mt-1 text-gray-700">Overview of donations and impact.</p>
+        </div>
+        <button
+          onClick={() => {
+            setAdminAuthed(false)
+            router.replace("/admin")
+          }}
+          className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-100"
+        >
+          Logout
+        </button>
+      </div>
+
+      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <Stat label="Total Amount" value={`₹${totalAmount.toLocaleString("en-IN")}`} />
+        <Stat label="Total Donors" value={totalDonors.toString()} />
+        <Stat label="Bundles Donated" value={totalBundles.toString()} />
+        {/* <Stat label="Students Impacted" value={students.toString()} /> */}
+        <Stat label="New Donations" value={newDonations.toString()} />
+      </div>
+
+      <div className="mt-8">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-blue-900">Recent Donors</h2>
+          <div className="flex items-center gap-2">
+            <button
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-100"
+              onClick={() => exportCsv(donors)}
+            >
+              Export CSV
+            </button>
+            <a href="/admin/donors" className="text-sm text-blue-900 hover:underline">
+              View all
+            </a>
+          </div>
+        </div>
+        <div className="mt-3 overflow-x-auto">
+          <table className="min-w-full divide-y divide-gray-200 text-sm">
+            <thead className="bg-gray-50">
+              <tr>
+                <Th>Name</Th>
+                <Th>Type</Th>
+                <Th>Total (₹)</Th>
+                <Th>Status</Th>
+                <Th>Date</Th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {loading ? (
+                <tr>
+                  <Td colSpan={4} className="text-center text-gray-600 py-6">Loading…</Td>
+                </tr>
+              ) : donors.length === 0 ? (
+                <tr>
+                  <Td colSpan={4} className="text-center text-gray-600 py-6">No donors yet.</Td>
+                </tr>
+              ) : (
+                donors.slice(0, 10).map((d, i) => (
+                  <tr
+                    key={(d.id ?? d.createdAt) + "-" + i}
+                    onClick={() => setSelected(d)}
+                    className="cursor-pointer hover:bg-gray-50"
+                  >
+                    <Td className="font-medium text-gray-900">{d.name}</Td>
+                    <Td>
+                      {typeof d.bundles === "number" && d.bundles > 0
+                        ? `${d.bundles} bundle${d.bundles > 1 ? "s" : ""}`
+                        : "Custom"}
+                    </Td>
+                    <Td>₹{d.total.toLocaleString("en-IN")}</Td>
+                    <Td>
+                      <span className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium border",
+                        d.status === "read"
+                          ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                          : "border-amber-200 bg-amber-50 text-amber-700"
+                      )}>
+                        {d.status === "read" ? "Read" : "New"}
+                      </span>
+                    </Td>
+                    <Td>
+                      {new Date(d.createdAt).toLocaleDateString()} {" "}
+                      {new Date(d.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                    </Td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Donor Details</DialogTitle>
+            <DialogDescription>Donation and contact information.</DialogDescription>
+          </DialogHeader>
+          {selected ? (
+            <div className="grid gap-2 text-sm">
+              <Row label="Name" value={selected.name} />
+              <Row
+                label="Type"
+                value={
+                  typeof selected.bundles === "number" && selected.bundles > 0
+                    ? `Bundles (${selected.bundles})`
+                    : "Custom"
+                }
+              />
+              <Row label="Total" value={`₹${selected.total.toLocaleString("en-IN")}`} />
+              <Row label="Email" value={selected.email || "—"} />
+              <Row label="Phone" value={selected.phone || "—"} />
+              <Row label="Message" value={selected.message || "—"} />
+              <div className="flex items-center justify-between mt-2">
+                <div className="text-sm text-gray-700">
+                  Status: <span className="font-medium">{selected.status === "read" ? "Read" : "New"}</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-100"
+                    onClick={async () => {
+                      const next = selected.status === "read" ? "new" : "read"
+                      const res = await fetch("/api/donations", {
+                        method: "PATCH",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ id: selected.id, status: next }),
+                      })
+                      if (res.ok) {
+                        setDonors((prev) => prev.map((d) => (d.id === selected.id ? { ...d, status: next } : d)))
+                        setSelected((curr) => (curr ? { ...curr, status: next } : curr))
+                      }
+                    }}
+                  >
+                    Mark as {selected.status === "read" ? "New" : "Read"}
+                  </button>
+                </div>
+              </div>
+              <Row
+                label="Date"
+                value={`${new Date(selected.createdAt).toLocaleDateString()} ${new Date(selected.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}`}
+              />
+            </div>
+          ) : null}
+        </DialogContent>
+      </Dialog>
+    </section>
+  )
+}
+
+function Stat({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+      <div className="text-sm text-gray-600">{label}</div>
+      <div className="mt-1 text-xl font-semibold text-blue-900">{value}</div>
+    </div>
+  )
+}
+
+function Th({ children }: { children: React.ReactNode }) {
+  return <th className="px-4 py-2 text-left font-semibold text-gray-700">{children}</th>
+}
+function Td({ children, className, colSpan }: { children: React.ReactNode; className?: string; colSpan?: number }) {
+  return (
+    <td colSpan={colSpan} className={cn("px-4 py-2 text-gray-700", className)}>
+      {children}
+    </td>
+  )
+}
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="flex items-start gap-3">
+      <div className="w-28 shrink-0 text-gray-600">{label}</div>
+      <div className="flex-1 text-gray-900">{value}</div>
+    </div>
+  )
+}
+
+type Donation = {
+  id?: string
+  name: string
+  email: string
+  phone?: string
+  message?: string
+  mode: "bundles" | "custom"
+  bundles?: number
+  total: number
+  visibility: "public" | "anonymous" | "initials"
+  createdAt: string
+  status?: "new" | "read"
+}
+
+function exportCsv(rows: Donation[]) {
+  const headers = [
+    "id",
+    "name",
+    "email",
+    "phone",
+    "message",
+    "mode",
+    "bundles",
+    "total",
+    "visibility",
+    "status",
+    "createdAt",
+  ]
+  const escape = (val: unknown) => {
+    const s = String(val ?? "")
+    if (s.includes("\n") || s.includes(",") || s.includes('"')) {
+      return '"' + s.replaceAll('"', '""') + '"'
+    }
+    return s
+  }
+  const lines = [headers.join(",")]
+  for (const d of rows) {
+    lines.push([
+      d.id ?? "",
+      d.name,
+      d.email,
+      d.phone ?? "",
+      d.message ?? "",
+      d.mode,
+      typeof d.bundles === "number" ? d.bundles : "",
+      d.total,
+      d.visibility,
+      d.status ?? "",
+      d.createdAt,
+    ].map(escape).join(","))
+  }
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement("a")
+  a.href = url
+  a.download = `donations-${new Date().toISOString()}.csv`
+  document.body.appendChild(a)
+  a.click()
+  document.body.removeChild(a)
+  URL.revokeObjectURL(url)
+}
