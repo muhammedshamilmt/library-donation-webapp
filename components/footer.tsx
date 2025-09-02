@@ -4,18 +4,18 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 
 export function Footer() {
-  const [now, setNow] = useState<Date>(() => new Date())
+  // Avoid SSR/client mismatch by initializing after mount
+  const [now, setNow] = useState<Date | null>(null)
 
   useEffect(() => {
+    setNow(new Date())
     const id = setInterval(() => setNow(new Date()), 1000)
     return () => clearInterval(id)
   }, [])
 
-  const timeString = now.toLocaleTimeString(undefined, {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-  })
+  const timeString = now
+    ? now.toLocaleTimeString(undefined, { hour: "2-digit", minute: "2-digit", second: "2-digit" })
+    : ""
 
   return (
     <footer className="border-t border-gray-200 bg-white">
@@ -33,7 +33,7 @@ export function Footer() {
               Donors
             </Link>
           </nav>
-          <time aria-label="Current time" className="text-sm text-gray-600 tabular-nums">
+          <time suppressHydrationWarning aria-label="Current time" className="text-sm text-gray-600 tabular-nums">
             {timeString}
           </time>
         </div>

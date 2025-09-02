@@ -7,8 +7,8 @@ import { Footer } from "@/components/footer"
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: "Donate Books, Build Futures",
-  description: "A simple way to donate funds for library books.",
+  title: "Library Donation – Islamic Dawa Academy",
+  description: "Support Islamic Dawa Academy's mission by donating funds for student library book bundles.",
     generator: 'v0.app'
 }
 
