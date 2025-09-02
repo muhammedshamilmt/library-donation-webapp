@@ -36,18 +36,19 @@ npm install
 2) Create `.env.local`
 
 ```bash
-# Razorpay
-RAZORPAY_KEY_ID=rzp_test_uygrrtKtEWuv1x
-RAZORPAY_KEY_SECRET=fbHetBP6dgo8OYdJtuiHeosP
-NEXT_PUBLIC_RAZORPAY_KEY_ID=rzp_test_uygrrtKtEWuv1x
+# Razorpay (test keys - replace with your own securely)
+RAZORPAY_KEY_ID=your_razorpay_test_key_id
+RAZORPAY_KEY_SECRET=your_razorpay_test_key_secret
+NEXT_PUBLIC_RAZORPAY_KEY_ID=your_razorpay_test_key_id
 
-# Admin (demo only)
-NEXT_PUBLIC_ADMIN_EMAIL=admin@domain.com
-NEXT_PUBLIC_ADMIN_PASS=admin@123
+# Admin (demo credentials - never use in production)
+NEXT_PUBLIC_ADMIN_EMAIL=your_admin_email@example.com
+NEXT_PUBLIC_ADMIN_PASS=your_admin_password
 
 # MongoDB
-MONGODB_URI=mongodb+srv://<user>:<pass>@cluster0.example.mongodb.net/
+MONGODB_URI=mongodb+srv://<username>:<password>@cluster0.mongodb.net/
 MONGODB_DB=library-donations
+
 ```
 
 3) Run

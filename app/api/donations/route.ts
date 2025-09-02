@@ -109,4 +109,34 @@ export async function PATCH(req: Request) {
   }
 }
 
+export async function DELETE(req: Request) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const id = searchParams.get("id")
+    const body = await (async () => {
+      try {
+        return await req.json()
+      } catch {
+        return null
+      }
+    })()
+    const delId = id || body?.id
+    if (!delId) {
+      return NextResponse.json({ error: "Missing id" }, { status: 400 })
+    }
+
+    const db = await getDb()
+    const result = await db.collection("donations").deleteOne({ _id: new ObjectId(delId) })
+    if (result.deletedCount === 0) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 })
+    }
+    return NextResponse.json({ ok: true })
+  } catch (err) {
+    return NextResponse.json(
+      { error: "Failed to delete donation" },
+      { status: 500 }
+    )
+  }
+}
+
 

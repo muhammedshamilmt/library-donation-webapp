@@ -101,6 +101,7 @@ export default function AdminDashboard() {
             <thead className="bg-gray-50">
               <tr>
                 <Th>Name</Th>
+                <Th>Phone</Th>
                 <Th>Type</Th>
                 <Th>Total (₹)</Th>
                 <Th>Status</Th>
@@ -110,11 +111,11 @@ export default function AdminDashboard() {
             <tbody className="divide-y divide-gray-100">
               {loading ? (
                 <tr>
-                  <Td colSpan={4} className="text-center text-gray-600 py-6">Loading…</Td>
+                  <Td colSpan={5} className="text-center text-gray-600 py-6">Loading…</Td>
                 </tr>
               ) : donors.length === 0 ? (
                 <tr>
-                  <Td colSpan={4} className="text-center text-gray-600 py-6">No donors yet.</Td>
+                  <Td colSpan={5} className="text-center text-gray-600 py-6">No donors yet.</Td>
                 </tr>
               ) : (
                 donors.slice(0, 10).map((d, i) => (
@@ -124,6 +125,7 @@ export default function AdminDashboard() {
                     className="cursor-pointer hover:bg-gray-50"
                   >
                     <Td className="font-medium text-gray-900">{d.name}</Td>
+                    <Td>{d.phone || "—"}</Td>
                     <Td>
                       {typeof d.bundles === "number" && d.bundles > 0
                         ? `${d.bundles} bundle${d.bundles > 1 ? "s" : ""}`

@@ -73,16 +73,18 @@ export default function AdminDonorsPage() {
           <thead className="bg-gray-50">
             <tr>
               <Th>Name</Th>
+              <Th>Phone</Th>
               <Th>Type</Th>
               <Th>Total (₹)</Th>
               <Th>Status</Th>
               <Th>Date</Th>
+              <Th>Action</Th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
               <tr>
-                <Td colSpan={5} className="text-center text-gray-600 py-6">Loading…</Td>
+                <Td colSpan={7} className="text-center text-gray-600 py-6">Loading…</Td>
               </tr>
             ) : rows.map((d, i) => (
               <tr
@@ -91,6 +93,7 @@ export default function AdminDonorsPage() {
                 className="cursor-pointer hover:bg-gray-50"
               >
                 <Td className="font-medium text-gray-900">{d.name}</Td>
+                <Td>{d.phone || "—"}</Td>
                 <Td>
                   {typeof d.bundles === "number" && d.bundles > 0
                     ? `${d.bundles} bundle${d.bundles > 1 ? "s" : ""}`
@@ -111,11 +114,26 @@ export default function AdminDonorsPage() {
                   {new Date(d.createdAt).toLocaleDateString()} {" "}
                   {new Date(d.createdAt).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                 </Td>
+                <Td>
+                  <button
+                    className="rounded-md border border-red-300 px-2 py-1 text-xs text-red-700 hover:bg-red-50"
+                    onClick={async (e) => {
+                      e.stopPropagation()
+                      if (!confirm("Delete this donation?")) return
+                      const res = await fetch(`/api/donations?id=${encodeURIComponent(d.id ?? "")}` , { method: "DELETE" })
+                      if (res.ok) {
+                        setDonors((prev) => prev.filter((x) => x.id !== d.id))
+                      }
+                    }}
+                  >
+                    Delete
+                  </button>
+                </Td>
               </tr>
             ))}
             {!loading && rows.length === 0 ? (
               <tr>
-                <Td colSpan={5} className="text-center text-gray-600 py-6">
+                <Td colSpan={7} className="text-center text-gray-600 py-6">
                   No donors yet.
                 </Td>
               </tr>
