@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 
-const BUNDLE_PRICE = 1100 // INR
+const BUNDLE_PRICE = 1001 // INR
 
 export default function DonatePage() {
   const { addDonor, donors } = useDonors()
@@ -352,7 +352,7 @@ export default function DonatePage() {
               <div className="grid gap-2">
                 <label className="text-sm font-medium text-gray-800">Enter amount (INR)</label>
                 <div className="flex gap-2">
-                  {[500, 1100, 2200, 5000].map((amt) => (
+                  {[500, 1001, 2002, 5000].map((amt) => (
                     <Button
                       key={amt}
                       type="button"
