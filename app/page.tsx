@@ -72,60 +72,47 @@ export default function Page() {
   const remainingDisplay = `₹${remaining.toLocaleString("en-IN")}`
   const goalDisplay = `₹${GOAL.toLocaleString("en-IN")}`
   const progress = Math.max(0, Math.min(totalFunds / GOAL, 1))
-  const progressPct = Math.round(progress * 100)
+  const progressPctExact = Math.max(0, Math.min(progress * 100, 100))
+  const progressPctDisplay = progressPctExact.toFixed(2)
+  // Campaign bundle target
+  const TARGET_BUNDLES = 2500
+  const remainingBundles = Math.max(TARGET_BUNDLES - bundlesDonated, 0)
 
   return (
     <div className="space-y-12">
-      {/* Hero */}
-      <section className="rounded-xl bg-white p-8 md:p-12 border border-gray-200">
-        <div className="max-w-3xl">
-          <h1 className="text-balance text-3xl md:text-5xl font-semibold text-blue-900">Donate Books, Build Futures</h1>
-          <p className="mt-4 text-pretty text-gray-700 leading-relaxed">
-            Your contribution puts books into the hands of students who need them most. Together we can spark curiosity,
-            open doors, and build brighter futures.
-          </p>
-          <div className="mt-6">
-            <Link
-              href="/donate"
-              className="inline-flex items-center justify-center rounded-lg bg-amber-500 text-white px-5 py-3 text-sm font-medium shadow transition-colors hover:brightness-110"
-            >
-              Donate Now
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Impact */}
-      <section aria-labelledby="impact" className="rounded-xl bg-white p-6 md:p-8 border border-gray-200">
-        <h2 id="impact" className="text-lg font-semibold text-gray-900">
-          Our Impact
-        </h2>
-        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
-          <ImpactStat label="Total Funds Received" value={totalFundsDisplay} />
-          <ImpactStat label="Books Donated" value={bundlesDonated.toLocaleString("en-IN") + "+"} />
-          <ImpactStat label="Students Helped" value={studentsHelped.toLocaleString("en-IN") + "+"} />
-          {/* <ImpactStat label="Communities Reached" value="120+" /> */}
-        </div>
-        <p className="mt-3 text-xs text-gray-500">Calculated at ₹1,001 per book. Includes a minus-one adjustment.</p>
-      </section>
-
       {/* Bundle highlight with image (2-col on md+) */}
       <section aria-labelledby="bundle-highlight" className="rounded-xl bg-white border border-gray-200 p-6 md:p-8">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:items-center">
           <div>
             <h2 id="bundle-highlight" className="text-xl md:text-2xl font-semibold text-blue-900">
-              1 Bundle Needed — ₹1,001
+              Library Book Shelf Campaign
             </h2>
             <p className="mt-2 text-gray-700 leading-relaxed">
-              Help us place essential learning materials into students’ hands. Every bundle moves us one step closer to
-              a brighter classroom experience.
+              We’re raising funds to equip libraries with essential learning materials. Together, let’s deliver 2,500
+              book bundles to students and classrooms that need them most.
             </p>
+
+            {/* Campaign quick stats */}
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
+                <div className="text-xs text-gray-600">Target</div>
+                <div className="text-sm font-medium text-blue-900">2,500 bundles</div>
+              </div>
+              <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
+                <div className="text-xs text-emerald-700">Remaining</div>
+                <div className="text-sm font-semibold text-emerald-800">{remainingBundles.toLocaleString("en-IN")} bundles</div>
+              </div>
+              <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
+                <div className="text-xs text-amber-800">Price</div>
+                <div className="text-sm font-semibold text-amber-900">₹1,001 per bundle</div>
+              </div>
+            </div>
 
             <ul className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Textbooks</li>
               <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Study Guides</li>
               <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Reading Books</li>
-              <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Stationery</li>
+              <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Research Books</li>
             </ul>
 
             <div className="mt-5">
@@ -150,34 +137,68 @@ export default function Page() {
         </div>
       </section>
 
+
+      {/* Our Impact */}
+      <section aria-labelledby="impact" className="rounded-xl bg-white p-6 md:p-8 border border-gray-200">
+        <h2 id="impact" className="text-lg font-semibold text-gray-900">
+          Our Impact
+        </h2>
+        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
+          <ImpactStat label="Total Funds Received" value={totalFundsDisplay} />
+          <ImpactStat label="Books Donated" value={bundlesDonated.toLocaleString("en-IN") + "+"} />
+          <ImpactStat label="Students Helped" value={studentsHelped.toLocaleString("en-IN") + "+"} />
+          {/* <ImpactStat label="Communities Reached" value="120+" /> */}
+        </div>
+        <p className="mt-3 text-xs text-gray-500">Calculated at ₹1,001 per book. Includes a minus-one adjustment.</p>
+      </section>
+
+      {/* Hero */}
+      <section className="rounded-xl bg-white p-8 md:p-12 border border-gray-200">
+        <div className="max-w-3xl">
+          <h1 className="text-balance text-3xl md:text-5xl font-semibold text-blue-900">Donate Books, Build Futures</h1>
+          <p className="mt-4 text-pretty text-gray-700 leading-relaxed">
+            Your contribution puts books into the hands of students who need them most. Together we can spark curiosity,
+            open doors, and build brighter futures.
+          </p>
+          <div className="mt-6">
+            <Link
+              href="/donate"
+              className="inline-flex items-center justify-center rounded-lg bg-amber-500 text-white px-5 py-3 text-sm font-medium shadow transition-colors hover:brightness-110"
+            >
+              Donate Now
+            </Link>
+          </div>
+        </div>
+      </section>
+
       {/* Fundraising goal with progress bar */}
       <section aria-labelledby="fund-goal" className="rounded-xl bg-white border border-gray-200 p-6 md:p-8">
         <div className="flex items-center justify-between gap-4">
           <h2 id="fund-goal" className="text-lg md:text-xl font-semibold text-blue-900">
             Fundraising Goal
           </h2>
-          <span className="text-sm text-gray-600">Target: {goalDisplay}</span>
+          {/* <span className="text-sm text-gray-600">Target: {goalDisplay}</span> */}
         </div>
 
         <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
           <ImpactStat label="Total Funds Received" value={totalFundsDisplay} />
           <ImpactStat label="Remaining" value={remainingDisplay} />
-          <ImpactStat label="Progress" value={`${progressPct}%`} />
+          <ImpactStat label="Progress" value={`${progressPctDisplay}%`} />
         </div>
 
         <div className="mt-6">
           <div
             className="h-3 w-full overflow-hidden rounded-full bg-gray-200"
             role="progressbar"
-            aria-valuenow={progressPct}
+            aria-valuenow={Number(progressPctDisplay)}
             aria-valuemin={0}
             aria-valuemax={100}
             aria-label="Donation progress toward goal"
           >
-            <div className="h-full bg-blue-900 transition-[width] duration-500" style={{ width: `${progressPct}%` }} />
+            <div className="h-full bg-blue-900 transition-[width] duration-500" style={{ width: `${progressPctExact}%` }} />
           </div>
           <p className="mt-3 text-sm text-gray-600">
-            {progressPct >= 100
+            {progressPctExact >= 100
               ? "Goal reached! Thank you for your incredible support."
               : "Every contribution brings us closer. Thank you for helping us build brighter futures."}
           </p>
