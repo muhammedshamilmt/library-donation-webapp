@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils"
 const links = [
   { href: "/", label: "Home" },
   { href: "/donate", label: "Donate" },
-  { href: "/donors", label: "Donors" },
+  // { href: "/donors", label: "Donors" },
 ]
 
 export function Navbar() {
