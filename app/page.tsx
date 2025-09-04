@@ -52,16 +52,16 @@ export default function Page() {
 
   const { totalFunds, bundlesDonated, studentsHelped } = useMemo(() => {
     const totalFundsLocal = donations.reduce((sum, d) => sum + (d.total || 0), 0)
-    // Calculate total bundles purely from total funds
-    const bundlesFromFunds = Math.floor(totalFundsLocal / BUNDLE_PRICE)
-    // Apply minus-one adjustment as requested
-    const bundlesAdj = Math.max(0, bundlesFromFunds - 1)
+    // Calculate total bundles as decimal
+    const bundlesFromFunds = +(totalFundsLocal / BUNDLE_PRICE).toFixed(2)
+    // Apply minus-one adjustment as requested (if needed, but keep decimal)
+    const bundlesAdj = Math.max(0, +(bundlesFromFunds - 1).toFixed(2))
     const studentsTotal = bundlesFromFunds
 
     return {
       totalFunds: totalFundsLocal,
       bundlesDonated: bundlesAdj,
-      studentsHelped: Math.max(0, studentsTotal - 1),
+      studentsHelped: Math.max(0, +(studentsTotal - 1).toFixed(2)),
     }
   }, [donations])
 
@@ -76,7 +76,7 @@ export default function Page() {
   const progressPctDisplay = progressPctExact.toFixed(2)
   // Campaign bundle target
   const TARGET_BUNDLES = 2500
-  const remainingBundles = Math.max(TARGET_BUNDLES - bundlesDonated, 0)
+  const remainingBundles = Math.max(TARGET_BUNDLES - bundlesDonated, 0).toFixed(2)
 
   return (
     <div className="space-y-12">
@@ -100,7 +100,7 @@ export default function Page() {
               </div>
               <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-3">
                 <div className="text-xs text-emerald-700">Remaining</div>
-                <div className="text-sm font-semibold text-emerald-800">{remainingBundles.toLocaleString("en-IN")} bundles</div>
+                <div className="text-sm font-semibold text-emerald-800">{Number(remainingBundles).toLocaleString("en-IN")} bundles</div>
               </div>
               <div className="rounded-lg border border-amber-300 bg-amber-50 p-3">
                 <div className="text-xs text-amber-800">Price</div>
