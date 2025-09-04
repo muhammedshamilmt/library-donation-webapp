@@ -32,6 +32,11 @@ A Next.js app for Islamic Dawa Academy to collect and showcase donations funding
 ```bash
 npm install
 ```
+or 
+
+```bash
+npm install --legacy-peer-deps
+```
 
 2) Create `.env.local`
 
