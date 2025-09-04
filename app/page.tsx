@@ -129,7 +129,7 @@ export default function Page() {
             {/* Use the existing library image asset */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/students-reading-in-a-library.png"
+              src="/images/shelf.jpg"
               alt="Students reading books in a library"
               className="h-full w-full object-cover"
             />
