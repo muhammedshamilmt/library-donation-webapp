@@ -19,14 +19,14 @@ export function Navbar() {
         <Link href="/" className="flex items-center gap-2">
           <Image
             src="/images/library-icon.svg"
-            alt="Donate Books - Shelf Campaign"
+            alt="Donate Books - Library Campaign"
             width={28}
             height={28}
             priority
           />
           <span className="flex flex-col leading-tight">
-            <span className="text-blue-900 font-semibold">Donate Books</span>
-            <span className="text-xs text-gray-500">Shelf Campaign</span>
+            <span className="text-blue-900 font-semibold">Huffaz Care</span>
+            <span className="text-xs text-gray-500">Library Campaign</span>
           </span>
         </Link>
         <nav aria-label="Main navigation" className="flex items-center gap-1">
