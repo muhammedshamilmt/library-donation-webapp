@@ -52,9 +52,9 @@ export default function DonatePage() {
   }
 
   const students = useMemo(() => {
-  if (mode === "bundles") return bundles
-  if (parsedCustom < 1) return 0
-  return Math.max(1, Math.floor(parsedCustom / BUNDLE_PRICE))
+    if (mode === "bundles") return bundles
+    if (parsedCustom < 1) return 0
+    return +(parsedCustom / BUNDLE_PRICE).toFixed(2)
   }, [mode, bundles, parsedCustom])
 
   const onSubmit = async (e: React.FormEvent) => {
