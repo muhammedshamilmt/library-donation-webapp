@@ -21,7 +21,7 @@ export function Footer() {
     <footer className="border-t border-gray-200 bg-white">
       <div className="mx-auto max-w-5xl px-4 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-gray-600">© {new Date().getFullYear()} Donate Books, Build Futures</p>
+         <p className="text-sm text-gray-600"> © {new Date().getFullYear()} Islamic Da&apos;wa Academy </p>
           <nav aria-label="Footer navigation" className="flex items-center gap-4">
             <Link className="text-sm text-gray-700 hover:text-amber-500" href="/">
               Home
