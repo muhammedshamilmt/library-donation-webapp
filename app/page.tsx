@@ -113,6 +113,8 @@ export default function Page() {
               <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Study Guides</li>
               <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Reading Books</li>
               <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Research Books</li>
+              <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Traditional Islamic Texts</li>
+              <li className="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-gray-700">Conference Hall</li>
             </ul>
 
             <div className="mt-5">
