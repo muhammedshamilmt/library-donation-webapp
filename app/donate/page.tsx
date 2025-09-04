@@ -40,7 +40,7 @@ export default function DonatePage() {
   const isValid =
     name.trim().length > 0 &&
     phone.trim().length > 0 &&
-    (mode === "bundles" ? bundles >= 1 : parsedCustom >= 100)
+    (mode === "bundles" ? bundles >= 1 : parsedCustom >= 1)
 
   // Helper to format phone with country code
   function formatPhone(phone: string, code: string) {
@@ -52,9 +52,9 @@ export default function DonatePage() {
   }
 
   const students = useMemo(() => {
-    if (mode === "bundles") return bundles
-    if (parsedCustom < 100) return 0
-    return Math.max(1, Math.floor(parsedCustom / BUNDLE_PRICE))
+  if (mode === "bundles") return bundles
+  if (parsedCustom < 1) return 0
+  return Math.max(1, Math.floor(parsedCustom / BUNDLE_PRICE))
   }, [mode, bundles, parsedCustom])
 
   const onSubmit = async (e: React.FormEvent) => {
@@ -65,7 +65,7 @@ export default function DonatePage() {
         description:
           mode === "bundles"
             ? "Please enter your details, phone and at least 1 bundle."
-            : "Please enter your details, phone and at least ₹100.",
+            : "Please enter your details, phone and at least ₹1.",
         variant: "destructive",
       })
       return
@@ -399,15 +399,15 @@ export default function DonatePage() {
                     inputMode="numeric"
                     pattern="[0-9]*"
                     type="number"
-                    min={0}
-                    step={50}
+                    min={1}
+                    step={1}
                     value={customAmount}
                     onChange={(e) => setCustomAmount(e.target.value)}
                     className="pl-7"
                     placeholder="e.g., 1500"
                     aria-label="Custom amount in rupees"
                   />
-                  <p className="mt-1 text-xs text-gray-600">Minimum custom donation: ₹100</p>
+                  <p className="mt-1 text-xs text-gray-600">Minimum custom donation: ₹1</p>
                 </div>
 
                 <div className="flex items-center justify-between bg-emerald-50 border border-emerald-200 rounded-md px-3 py-2">
