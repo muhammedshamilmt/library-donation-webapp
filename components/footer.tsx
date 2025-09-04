@@ -22,16 +22,22 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-4 py-6">
         <div className="flex flex-col md:flex-row items-center justify-between gap-4">
          <p className="text-sm text-gray-600"> © {new Date().getFullYear()} Islamic Da&apos;wa Academy </p>
-          <nav aria-label="Footer navigation" className="flex items-center gap-4">
+          <nav aria-label="Footer navigation" className="flex items-center gap-4 flex-wrap">
             <Link className="text-sm text-gray-700 hover:text-amber-500" href="/">
               Home
             </Link>
             <Link className="text-sm text-gray-700 hover:text-amber-500" href="/donate">
               Donate
             </Link>
-            {/* <Link className="text-sm text-gray-700 hover:text-amber-500" href="/donors">
-              Donors
-            </Link> */}
+            <Link className="text-sm text-gray-700 hover:text-amber-500" href="/privacy-policy">
+              Privacy Policy
+            </Link>
+            <Link className="text-sm text-gray-700 hover:text-amber-500" href="/return-policy">
+              Return Policy
+            </Link>
+            <Link className="text-sm text-gray-700 hover:text-amber-500" href="/terms-and-conditions">
+              Terms & Conditions
+            </Link>
           </nav>
           <time suppressHydrationWarning aria-label="Current time" className="text-sm text-gray-600 tabular-nums">
             {timeString}
