@@ -23,6 +23,7 @@ export default function DonatePage() {
   const { toast } = useToast()
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
+  const [countryCode, setCountryCode] = useState("+91")
   const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
   const [mode, setMode] = useState<"bundles" | "custom">("bundles")
@@ -40,6 +41,15 @@ export default function DonatePage() {
     name.trim().length > 0 &&
     phone.trim().length > 0 &&
     (mode === "bundles" ? bundles >= 1 : parsedCustom >= 100)
+
+  // Helper to format phone with country code
+  function formatPhone(phone: string, code: string) {
+    const trimmed = phone.trim()
+    if (trimmed.startsWith("+")) return trimmed
+    // Remove leading zeros or spaces
+    const cleaned = trimmed.replace(/^0+/, "")
+    return code + cleaned
+  }
 
   const students = useMemo(() => {
     if (mode === "bundles") return bundles
@@ -63,11 +73,13 @@ export default function DonatePage() {
 
     try {
       setSubmitting(true)
+      // Format phone with country code
+      const formattedPhone = formatPhone(phone, countryCode)
       // 1) Create Razorpay order on server
       const orderResp = await fetch("/api/razorpay/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: total, notes: { email, name, phone } }),
+        body: JSON.stringify({ amount: total, notes: { email, name, phone: formattedPhone } }),
       })
       if (!orderResp.ok) throw new Error("Failed to create order")
       const { order } = await orderResp.json()
@@ -97,7 +109,7 @@ export default function DonatePage() {
         name: "Library Donations",
         description: "Support student book bundles",
         order_id: order.id,
-        prefill: { name, email, contact: phone },
+  prefill: { name, email, contact: formattedPhone },
         notes: { visibility, mode },
         theme: { color: "#1e3a8a" },
         handler: async (response: any) => {
@@ -122,7 +134,7 @@ export default function DonatePage() {
                 ? {
                     name: name.trim(),
                     email: email.trim(),
-                    phone: phone.trim(),
+                    phone: formattedPhone,
                     message: message.trim(),
                     mode,
                     bundles,
@@ -132,7 +144,7 @@ export default function DonatePage() {
                 : ({
                     name: name.trim(),
                     email: email.trim(),
-                    phone: phone.trim(),
+                    phone: formattedPhone,
                     message: message.trim(),
                     mode,
                     total,
@@ -221,14 +233,32 @@ export default function DonatePage() {
               />
             </Field>
             <Field label="Phone" required>
-              <Input
-                required
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-                placeholder="+91 98XXXXXX"
-                name="phone"
-                aria-label="Phone"
-              />
+              <div className="flex gap-2 w-full max-w-[400px] md:max-w-[420px] items-center">
+                <Select value={countryCode} onValueChange={setCountryCode}>
+                  <SelectTrigger className="w-16 min-w-[4rem]" aria-label="Country code">
+                    <span className="font-semibold">{countryCode}</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="+91"><span className="font-semibold">IN</span> +91 India</SelectItem>
+                    <SelectItem value="+971"><span className="font-semibold">AE</span> +971 UAE</SelectItem>
+                    <SelectItem value="+973"><span className="font-semibold">BH</span> +973 Bahrain</SelectItem>
+                    <SelectItem value="+974"><span className="font-semibold">QA</span> +974 Qatar</SelectItem>
+                    <SelectItem value="+968"><span className="font-semibold">OM</span> +968 Oman</SelectItem>
+                    <SelectItem value="+965"><span className="font-semibold">KW</span> +965 Kuwait</SelectItem>
+                    <SelectItem value="+966"><span className="font-semibold">SA</span> +966 Saudi Arabia</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Input
+                  required
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                  placeholder="Phone number"
+                  name="phone"
+                  aria-label="Phone"
+                  className="flex-1 min-w-0"
+                  style={{ minWidth: "160px" }}
+                />
+              </div>
             </Field>
           </div>
 
