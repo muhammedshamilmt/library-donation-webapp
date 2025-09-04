@@ -18,7 +18,7 @@ export function Navbar() {
       <div className="mx-auto max-w-5xl px-4 h-14 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2">
           <Image
-            src="/placeholder-logo.svg"
+            src="/images/library-icon.svg"
             alt="Donate Books - Shelf Campaign"
             width={28}
             height={28}
