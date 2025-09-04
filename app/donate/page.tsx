@@ -472,7 +472,7 @@ function BenefitsAndImpact({
       {students > 0 ? (
         <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
           <p className="text-emerald-700 text-sm font-medium">
-            Your donation will impact {students} student{students > 1 ? "s" : ""} directly!
+            Your {students} bundle donation will impact in moulding a scholar.
           </p>
         </div>
       ) : null}
