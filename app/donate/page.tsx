@@ -22,8 +22,8 @@ export default function DonatePage() {
   const { addDonor, donors } = useDonors()
   const { toast } = useToast()
   const [name, setName] = useState("")
-  const [email, setEmail] = useState("")
   const [phone, setPhone] = useState("")
+  const [email, setEmail] = useState("")
   const [message, setMessage] = useState("")
   const [mode, setMode] = useState<"bundles" | "custom">("bundles")
   const [visibility, setVisibility] = useState<"public" | "anonymous" | "initials">("public")
@@ -38,7 +38,6 @@ export default function DonatePage() {
 
   const isValid =
     name.trim().length > 0 &&
-    email.trim().length > 0 &&
     phone.trim().length > 0 &&
     (mode === "bundles" ? bundles >= 1 : parsedCustom >= 100)
 
@@ -221,20 +220,6 @@ export default function DonatePage() {
                 aria-label="Name"
               />
             </Field>
-            <Field label="Email" required>
-              <Input
-                required
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="you@example.com"
-                name="email"
-                aria-label="Email"
-              />
-            </Field>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Field label="Phone" required>
               <Input
                 required
@@ -243,6 +228,19 @@ export default function DonatePage() {
                 placeholder="+91 98XXXXXX"
                 name="phone"
                 aria-label="Phone"
+              />
+            </Field>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <Field label="Email">
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="you@example.com"
+                name="email"
+                aria-label="Email"
               />
             </Field>
             <Field label="Message (optional)">

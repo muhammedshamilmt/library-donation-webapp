@@ -5,7 +5,7 @@ import { ObjectId } from "mongodb"
 
 const DonationSchema = z.object({
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.string().email().optional().or(z.literal("").optional()),
   phone: z.string().min(1),
   message: z.string().optional().default(""),
   mode: z.enum(["bundles", "custom"]),
