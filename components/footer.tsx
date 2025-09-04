@@ -29,9 +29,9 @@ export function Footer() {
             <Link className="text-sm text-gray-700 hover:text-amber-500" href="/donate">
               Donate
             </Link>
-            <Link className="text-sm text-gray-700 hover:text-amber-500" href="/donors">
+            {/* <Link className="text-sm text-gray-700 hover:text-amber-500" href="/donors">
               Donors
-            </Link>
+            </Link> */}
           </nav>
           <time suppressHydrationWarning aria-label="Current time" className="text-sm text-gray-600 tabular-nums">
             {timeString}
