@@ -159,11 +159,11 @@ export default function DonatePage() {
             if (!saveResp.ok) throw new Error("Failed to save donation")
 
             addDonor(entry)
-            toast({
-              title: "Payment successful",
-              description: `We received ₹${total.toLocaleString("en-IN")}. Thank you!`,
-            })
 
+            // Redirect to success screen with details
+            window.location.href = `/donate/success?donorName=${encodeURIComponent(name.trim())}&amount=${encodeURIComponent(total)}&transactionId=${encodeURIComponent(response.razorpay_payment_id)}`;
+
+            // Optionally, reset form state after redirect (not strictly necessary)
             setName("")
             setEmail("")
             setPhone("")
@@ -394,7 +394,7 @@ export default function DonatePage() {
                   ))}
                 </div>
                 <div className="relative">
-                  <span className="pointer-events-none absolute inset-y-0 left-3 my-auto flex items-center text-gray-600">₹</span>
+                  <span className="pointer-events-none absolute left-3 top-0 bottom-0 flex items-center h-full text-gray-600">₹</span>
                   <Input
                     inputMode="numeric"
                     pattern="[0-9]*"
