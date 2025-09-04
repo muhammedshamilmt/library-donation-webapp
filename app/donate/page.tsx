@@ -464,7 +464,7 @@ function BenefitsAndImpact({
         <div className="mt-1 text-2xl font-semibold">₹{total.toLocaleString("en-IN")}</div>
         {students > 0 ? (
           <div className="mt-1 text-sm opacity-95">
-            Supporting {students} student{students > 1 ? "s" : ""}
+            Supporting {students} Bundle{students > 1 ?"s" : ""}
           </div>
         ) : null}
       </div>
