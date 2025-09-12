@@ -13,6 +13,10 @@ export default function AdminDashboard() {
   const [donors, setDonors] = useState<Donation[]>([])
   const [loading, setLoading] = useState(true)
   const [selected, setSelected] = useState<Donation | null>(null)
+  const [gpayAmount, setGpayAmount] = useState<number>(0)
+  const [gpayInput, setGpayInput] = useState<string>("")
+  const [gpayLoading, setGpayLoading] = useState<boolean>(true)
+  const [gpaySaving, setGpaySaving] = useState<boolean>(false)
 
   useEffect(() => {
     if (!isAdminAuthed()) {
@@ -55,6 +59,38 @@ export default function AdminDashboard() {
     return { ...totals, students, newDonations }
   }, [donors])
 
+  const grandTotalAmount = useMemo(
+    () => totalAmount + (Number.isFinite(gpayAmount) ? gpayAmount : 0),
+    [totalAmount, gpayAmount],
+  )
+
+  // Load current GPay amount
+  useEffect(() => {
+    let isMounted = true
+    ;(async () => {
+      try {
+        const res = await fetch("/api/gpay", { cache: "no-store" })
+        if (!res.ok) throw new Error("Failed to fetch GPay amount")
+        const data = await res.json()
+        if (isMounted) {
+          const amt = typeof data.amount === "number" ? data.amount : 0
+          setGpayAmount(amt)
+          setGpayInput(String(amt))
+        }
+      } catch {
+        if (isMounted) {
+          setGpayAmount(0)
+          setGpayInput("0")
+        }
+      } finally {
+        if (isMounted) setGpayLoading(false)
+      }
+    })()
+    return () => {
+      isMounted = false
+    }
+  }, [])
+
   return (
     <section className="rounded-xl bg-white border border-gray-200 p-6 md:p-10">
       <div className="flex items-center justify-between">
@@ -74,11 +110,57 @@ export default function AdminDashboard() {
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat label="Total Amount" value={`₹${totalAmount.toLocaleString("en-IN")}`} />
+        <Stat label="Total Amount" value={`₹${grandTotalAmount.toLocaleString("en-IN")}`} />
         <Stat label="Total Donors" value={totalDonors.toString()} />
         <Stat label="Bundles Donated" value={totalBundles.toString()} />
         {/* <Stat label="Students Impacted" value={students.toString()} /> */}
         <Stat label="New Donations" value={newDonations.toString()} />
+      </div>
+
+      {/* GPay amount box (admin only) */}
+      <div className="mt-6 rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm text-gray-600">GPay Amount</div>
+            <div className="mt-1 text-xl font-semibold text-blue-900">
+              {gpayLoading ? "Loading…" : `₹${gpayAmount.toLocaleString("en-IN")}`}
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              type="number"
+              inputMode="numeric"
+              className="w-40 rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200"
+              value={gpayInput}
+              onChange={(e) => setGpayInput(e.target.value)}
+              placeholder="Enter amount"
+            />
+            <button
+              className="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-gray-800 hover:bg-gray-100 disabled:opacity-60"
+              disabled={gpaySaving}
+              onClick={async () => {
+                const next = Number(gpayInput)
+                if (!Number.isFinite(next) || next < 0) return
+                setGpaySaving(true)
+                try {
+                  const res = await fetch("/api/gpay", {
+                    method: "PATCH",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: next }),
+                  })
+                  if (res.ok) {
+                    setGpayAmount(next)
+                    setGpayInput(String(next))
+                  }
+                } finally {
+                  setGpaySaving(false)
+                }
+              }}
+            >
+              {gpaySaving ? "Saving…" : "Save"}
+            </button>
+          </div>
+        </div>
       </div>
 
       <div className="mt-8">

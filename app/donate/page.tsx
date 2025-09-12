@@ -448,7 +448,7 @@ function BenefitsAndImpact({
   return (
     <div className="mt-4 grid gap-4">
       {showBenefits ? (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <div className="hidden md:block rounded-lg border border-gray-200 bg-gray-50 p-4">
           <h3 className="text-sm font-semibold text-blue-900">What&apos;s in a Book Bundle?</h3>
           <ul className="mt-2 list-disc pl-5 text-sm text-gray-700 space-y-1">
             <li>Essential textbooks for core subjects</li>

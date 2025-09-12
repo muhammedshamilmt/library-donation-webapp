@@ -1,13 +1,14 @@
 "use client";
-import React from 'react';
+import React, { Suspense } from 'react';
 import Link from 'next/link';
 import jsPDF from 'jspdf';
+import { useSearchParams } from 'next/navigation';
 
-const SuccessPage = ({ searchParams }: { searchParams: Record<string, string> }) => {
-  // Example: Get details from query params (adjust as needed)
-  const donorName = searchParams.donorName || 'Donor';
-  const amount = searchParams.amount || '0';
-  const transactionId = searchParams.transactionId || 'N/A';
+const SuccessContent = () => {
+  const searchParams = useSearchParams();
+  const donorName = searchParams.get('donorName') ?? 'Donor';
+  const amount = searchParams.get('amount') ?? '0';
+  const transactionId = searchParams.get('transactionId') ?? 'N/A';
 
   // Download receipt handler
   const handleDownloadReceipt = () => {
@@ -52,6 +53,14 @@ const SuccessPage = ({ searchParams }: { searchParams: Record<string, string> })
         }
       `}</style>
     </div>
+  );
+};
+
+const SuccessPage = () => {
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen bg-green-50 px-4">Loading…</div>}>
+      <SuccessContent />
+    </Suspense>
   );
 };
 

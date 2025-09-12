@@ -46,19 +46,19 @@ export async function POST(req: Request) {
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url)
-    const limit = Number(searchParams.get("limit") ?? 50)
+    const limitStr = searchParams.get("limit")
+    const limit = limitStr === null ? null : Number(limitStr)
     const visibility = searchParams.get("visibility")
     const db = await getDb()
     const query: Record<string, unknown> = {}
     if (visibility) {
       query.visibility = visibility
     }
-    const docs = await db
-      .collection("donations")
-      .find(query)
-      .sort({ createdAt: -1 })
-      .limit(Number.isFinite(limit) ? limit : 50)
-      .toArray()
+    let cursor = db.collection("donations").find(query).sort({ createdAt: -1 })
+    if (limit !== null && Number.isFinite(limit)) {
+      cursor = cursor.limit(limit)
+    }
+    const docs = await cursor.toArray()
 
     const donations = docs.map((d) => ({ ...d, id: d._id?.toString(), _id: undefined }))
     return NextResponse.json({ donations })
